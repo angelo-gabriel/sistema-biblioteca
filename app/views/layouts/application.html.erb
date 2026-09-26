@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sistema de Empréstimo</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Biblioteca">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <style>
+      /* Estilização simples com CSS puro */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        padding-bottom: 2rem;
+        background-color: #f8fafc;
+        color: #334155;
+      }
+
+      .navbar {
+        background-color: #0f172a;
+        padding: 0.85rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .navbar-brand {
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.15rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .navbar-menu {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .nav-link {
+        color: #94a3b8;
+        text-decoration: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: background-color 0.2s, color 0.2s;
+      }
+
+      .nav-link:hover {
+        color: #f8fafc;
+        background-color: #1e293b;
+      }
+
+      .nav-link.active {
+        color: #ffffff;
+        background-color: #334155;
+      }
+
+      .nav-btn-primary {
+        color: #ffffff;
+        background-color: #2563eb;
+        text-decoration: none;
+        padding: 0.4rem 0.9rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: background-color 0.2s;
+      }
+
+      .nav-btn-primary:hover {
+        background-color: #1d4ed8;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      table { 
+        width: 100%;
+        border-collapse: collapse; 
+        margin-top: 1rem; 
+        background: #ffffff; 
+        border-radius: 8px; 
+        overflow: hidden; 
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+      }
+      th, td { 
+        border-bottom: 1px solid #e2e8f0; 
+        padding: 1rem 1.25rem; 
+        text-align: left; 
+      }
+      th { 
+        background-color: #f1f5f9; 
+        color: #475569; 
+        font-size: 0.85rem; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em; 
+      }
+      .alert { color: #991b1b; background-color: #fee2e2; border: 1px solid #fecaca; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; }
+      .notice { color: #166534; background-color: #dcfce7; border: 1px solid #bbf7d0; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; }
+    </style>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header class="navbar">
+      <%= link_to root_path, class: "navbar-brand" do %>
+        <span>Biblioteca Municipal de Xique-Xique</span>
+      <% end %>
+
+      <nav class="navbar-menu">
+        <%= link_to "Catálogo", root_path, class: "nav-link #{'active' if current_page?(root_path)}" %>
+        <%= link_to "Empréstimos", loans_path, class: "nav-link #{'active' if current_page?(loans_path)}" %>
+        <%= link_to "+ Novo Livro", new_book_path, class: "nav-btn-primary" %>
+      </nav>
+    </header>
+
+    <main class="container">
+      <% if notice %>
+        <div class="notice"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div class="alert"><%= alert %></div>
+      <% end %>
+    </main>
+    
+    <%= yield %>
+  </body>
+</html>

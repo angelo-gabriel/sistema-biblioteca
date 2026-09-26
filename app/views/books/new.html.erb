@@ -1,0 +1,38 @@
+<h2>Cadastrar novo Livro</h2>
+
+<% if @book.errors.any? %>
+    <div class="alert">
+        <ul>
+            <% @book.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+        </ul>
+    </div>
+<% end %>
+
+<%= form_with model: @book, local: true do |f| %>
+    <p>
+        <%= f.label :title, "Título" %>
+        <%= f.text_field :title, required: true %>
+    </p>
+
+    <p>
+        <%= f.label :author, "Autor" %>
+        <%= f.text_field :author, required: true %>
+    </p>
+
+    <p>
+        <%= f.label :isbn, "ISBN" %>
+        <%= f.text_field :isbn, required: true %>
+    </p>
+
+    <p>
+        <%= f.label :total_copies, "Quantidade de Exemplares" %><br>
+        <%= f.text_field :total_copies, min: 1, value: 1, required: true %>
+    </p>
+
+    <p>
+        <%= f.submit "Salvar Livro" %>
+        <%= link_to "Cancelar", root_path %>
+    </p>
+<% end %>

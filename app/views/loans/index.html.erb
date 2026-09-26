@@ -1,0 +1,41 @@
+<h2>Controle de Empréstimos</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Leitor</th>
+      <th>Livro</th>
+      <th>Data</th>
+      <th>Prazo</th>
+      <th>Multa</th>
+      <th>Ação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @loans.each do |loan| %>
+      <tr>
+        <td>#<%= loan.id %></td>
+        <td><%= loan.user.name %></td>
+        <td><%= loan.book.title %></td>
+        <td><%= loan.borrowed_at.strftime("%d/%m/%Y") %></td>
+        <td><%= loan.due_date.strftime("%d/%m/%Y") %></td>
+        <td>
+          <% if loan.returned_at.present? %>
+            Devolvido
+          <% else %>
+            <% fee = loan.current_late_fee.to_f %>
+            <%= fee > 0 ? "R$ #{sprintf('%.2f', fee)} (Atrasado)" : "R$ 0,00" %>
+          <% end %>
+        </td>
+        <td>
+          <% if loan.returned_at.nil? %>
+            <%= button_to "Devolver", return_book_loan_path(loan), method: :patch %>
+          <% else %>
+            -
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

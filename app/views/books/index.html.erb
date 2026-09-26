@@ -1,0 +1,37 @@
+<h2>Catálogo de Livros</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Título / Autor</th>
+      <th>ISBN</th>
+      <th>Empréstimos</th>
+      <th>Disponíveis</th>
+      <th>Ação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @catalog_items.each do |item| %>
+      <tr>
+        <td>
+          <strong><%= item.title %></strong><br>
+          <small><%= item.author %></small>
+        </td>
+        <td><%= item.isbn %></td>
+        <td><%= item.total_borrows %></td>
+        <td><%= item.available_copies %> / <%= item.total_copies %></td>
+        <td>
+          <% if item.available_copies > 0 %>
+            <%= form_with url: loans_path, method: :post, local: true do |f| %>
+              <%= f.hidden_field :book_id, value: item.book_id %>
+              <%= f.select :user_id, options_from_collection_for_select(@users, :id, :name), prompt: "Selecione o usuário", required: true %>
+              <%= f.submit "Emprestar" %>
+            <% end %>
+          <% else %>
+            <em>Esgotado</em>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
