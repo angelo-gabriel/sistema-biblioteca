@@ -1,37 +1,58 @@
-<h2>Catálogo de Livros</h2>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h2 class="h4 mb-0">Catálogo de Livros</h2>
+    <small class="text-muted">Alimentado pela <strong>VIEW SQL</strong> <code>book_catalog_summaries</code></small>
+  </div>
+  <%= link_to "+ Novo Livro", new_book_path, class: "btn btn-outline-primary btn-sm" %>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Título / Autor</th>
-      <th>ISBN</th>
-      <th>Empréstimos</th>
-      <th>Disponíveis</th>
-      <th>Ação</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @catalog_items.each do |item| %>
-      <tr>
-        <td>
-          <strong><%= item.title %></strong><br>
-          <small><%= item.author %></small>
-        </td>
-        <td><%= item.isbn %></td>
-        <td><%= item.total_borrows %></td>
-        <td><%= item.available_copies %> / <%= item.total_copies %></td>
-        <td>
-          <% if item.available_copies > 0 %>
-            <%= form_with url: loans_path, method: :post, local: true do |f| %>
-              <%= f.hidden_field :book_id, value: item.book_id %>
-              <%= f.select :user_id, options_from_collection_for_select(@users, :id, :name), prompt: "Selecione o usuário", required: true %>
-              <%= f.submit "Emprestar" %>
-            <% end %>
-          <% else %>
-            <em>Esgotado</em>
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="card shadow-sm border-0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Título / Autor</th>
+          <th>ISBN</th>
+          <th>Total Empréstimos</th>
+          <th>Exemplares</th>
+          <th>Status</th>
+          <th style="min-width: 250px;">Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @catalog_items.each do |item| %>
+          <tr>
+            <td>
+              <strong><%= item.title %></strong><br>
+              <span class="text-secondary small"><%= item.author %></span>
+            </td>
+            <td><code><%= item.isbn %></code></td>
+            <td><%= item.total_borrows %></td>
+            <td><%= item.available_copies %> / <%= item.total_copies %></td>
+            <td>
+              <% if item.availability_status == 'Disponível' %>
+                <span class="badge bg-success-subtle text-success border border-success-subtle">Disponível</span>
+              <% else %>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Esgotado</span>
+              <% end %>
+            </td>
+            <td>
+              <% if item.available_copies > 0 %>
+                <%= form_with url: loans_path, method: :post, local: true, class: "d-flex gap-2" do |f| %>
+                  <%= f.hidden_field :book_id, value: item.book_id %>
+                  <%= f.select :user_id, 
+                               options_from_collection_for_select(@users, :id, :name), 
+                               { prompt: "Selecione o leitor" }, 
+                               { required: true, class: "form-select form-select-sm" } %>
+                  <%= f.submit "Emprestar", class: "btn btn-primary btn-sm" %>
+                <% end %>
+              <% else %>
+                <button class="btn btn-secondary btn-sm" disabled>Esgotado</button>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

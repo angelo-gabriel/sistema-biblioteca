@@ -1,41 +1,57 @@
-<h2>Controle de Empréstimos</h2>
+<div class="mb-3">
+  <h2 class="h4 mb-0">Controle de Empréstimos</h2>
+  <small class="text-muted">A coluna de multa utiliza a <strong>FUNCTION SQL</strong> <code>calculate_late_fee()</code></small>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Leitor</th>
-      <th>Livro</th>
-      <th>Data</th>
-      <th>Prazo</th>
-      <th>Multa</th>
-      <th>Ação</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @loans.each do |loan| %>
-      <tr>
-        <td>#<%= loan.id %></td>
-        <td><%= loan.user.name %></td>
-        <td><%= loan.book.title %></td>
-        <td><%= loan.borrowed_at.strftime("%d/%m/%Y") %></td>
-        <td><%= loan.due_date.strftime("%d/%m/%Y") %></td>
-        <td>
-          <% if loan.returned_at.present? %>
-            Devolvido
-          <% else %>
-            <% fee = loan.current_late_fee.to_f %>
-            <%= fee > 0 ? "R$ #{sprintf('%.2f', fee)} (Atrasado)" : "R$ 0,00" %>
-          <% end %>
-        </td>
-        <td>
-          <% if loan.returned_at.nil? %>
-            <%= button_to "Devolver", return_book_loan_path(loan), method: :patch %>
-          <% else %>
-            -
-          <% end %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="card shadow-sm border-0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Leitor</th>
+          <th>Livro</th>
+          <th>Data Empréstimo</th>
+          <th>Prazo Devolução</th>
+          <th>Status / Multa</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @loans.each do |loan| %>
+          <tr>
+            <td><code>#<%= loan.id %></code></td>
+            <td class="fw-semibold"><%= loan.user.name %></td>
+            <td><%= loan.book.title %></td>
+            <td><%= loan.borrowed_at.strftime("%d/%m/%Y") %></td>
+            <td>
+              <%= loan.due_date.strftime("%d/%m/%Y") %>
+              <% if loan.returned_at.nil? && loan.due_date < Date.current %>
+                <span class="badge bg-danger ms-1">Atrasado</span>
+              <% end %>
+            </td>
+            <td>
+              <% if loan.returned_at.present? %>
+                <span class="badge bg-secondary-subtle text-secondary">Devolvido em <%= loan.returned_at.strftime("%d/%m/%Y") %></span>
+              <% else %>
+                <% fee = loan.current_late_fee.to_f %>
+                <% if fee > 0 %>
+                  <strong class="text-danger">R$ <%= sprintf("%.2f", fee) %></strong>
+                <% else %>
+                  <span class="text-success fw-medium">Em dia (R$ 0,00)</span>
+                <% end %>
+              <% end %>
+            </td>
+            <td>
+              <% if loan.returned_at.nil? %>
+                <%= button_to "Registrar Devolução", return_book_loan_path(loan), method: :patch, class: "btn btn-outline-danger btn-sm" %>
+              <% else %>
+                <span class="text-muted small">Concluído</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
